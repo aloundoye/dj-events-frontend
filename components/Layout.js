@@ -1,0 +1,20 @@
+import Head from "next/head";
+import styles from "../styles/Layout.module.css";
+export default function Layout(props) {
+  return (
+    <div>
+      <Head>
+        <title>{props.title}</title>
+        <meta name="description" content={props.description} />
+        <meta name="keywords" content={props.keywords} />
+      </Head>
+      <div className={styles.container}>{props.children}</div>
+    </div>
+  );
+}
+
+Layout.defaultProps = {
+  title: "Dj Events | Find the hottest parties",
+  description: "Find the latest DJ and other musical events",
+  keywords: "music, dj, edm, events",
+};
