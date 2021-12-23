@@ -1,6 +1,6 @@
-import Layout from "@/components/Layout";
-import EventItem from "@/components/EventItem";
-import { API_URL } from "@/config/index";
+import Layout from '@/components/Layout'
+import EventItem from '@/components/EventItem'
+import { API_URL } from '@/config/index'
 
 export default function EventsPage({ events }) {
   return (
@@ -12,15 +12,15 @@ export default function EventsPage({ events }) {
         <EventItem key={evt.id} evt={evt} />
       ))}
     </Layout>
-  );
+  )
 }
 
 export async function getStaticProps() {
-  const res = await fetch(`${API_URL}/api/events`);
-  const events = await res.json();
+  const res = await fetch(`${API_URL}/api/events`)
+  const events = await res.json()
 
   return {
     props: { events },
     revalidate: 1,
-  };
+  }
 }
