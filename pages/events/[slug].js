@@ -9,7 +9,7 @@ export default function EventPage({ evt }) {
   const deleteEvent = (event) => {
     console.log(event);
   };
-
+  console.log(evt);
   return (
     <Layout>
       <div className={styles.event}>
@@ -25,12 +25,16 @@ export default function EventPage({ evt }) {
         </div>
 
         <span>
-          {evt.date} at {evt.time}
+          {new Date(evt.date).toLocaleDateString("en-US")} at {evt.time}
         </span>
         <h1>{evt.name}</h1>
         {evt.image && (
           <div className={styles.image}>
-            <Image src={evt.image} width={960} height={600} />
+            <Image
+              src={evt.image.data.attributes.formats.medium.url}
+              width={960}
+              height={600}
+            />
           </div>
         )}
       </div>
@@ -54,21 +58,35 @@ export default function EventPage({ evt }) {
 export async function getStaticPaths() {
   const res = await fetch(`${API_URL}/api/events`);
   const events = await res.json();
-
-  const paths = events.map((event) => ({
-    params: { slug: event.slug },
+  console.log(events);
+  const paths = events.data.map((event) => ({
+    params: { slug: event.attributes.slug },
   }));
-
+  console.log(paths);
   return { paths, fallback: true };
 }
 
 export async function getStaticProps({ params: { slug } }) {
-  const response = await fetch(`${API_URL}/api/events/${slug}`);
+  const qs = require("qs");
+  const query = qs.stringify(
+    {
+      filters: {
+        slug: {
+          $eq: slug,
+        },
+      },
+      populate: "image",
+    },
+    {
+      encodeValuesOnly: true,
+    }
+  );
+  const response = await fetch(`${API_URL}/api/events?${query}`);
   const events = await response.json();
 
   return {
     props: {
-      evt: events[0],
+      evt: events.data[0].attributes,
     },
     revalidate: 1,
   };
