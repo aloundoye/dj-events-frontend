@@ -3,6 +3,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Layout from "@/components/Layout";
+import Modal from "@/components/Modal";
 import Link from "next/link";
 import Image from "next/image";
 import { API_URL } from "@/config/index";
@@ -12,7 +13,7 @@ import { FaImage } from "react-icons/fa";
 import qs from "qs";
 
 export default function EditEventPage({ event }) {
-  console.log(event.data);
+  const [showModal, setShowModal] = useState(false);
 
   const [values, setValues] = useState({
     name: event.data.attributes.name,
@@ -155,10 +156,12 @@ export default function EditEventPage({ event }) {
         <h2>No image uploaded</h2>
       )}
       <div>
-        <button className="btn-secondary">
+        <button className="btn-secondary" onClick={()=>setShowModal(true)}>
           <FaImage /> Set Image
         </button>
       </div>
+
+      <Modal show={showModal} onClose={()=>setShowModal(false)}>Image Upload</Modal>
     </Layout>
   );
 }

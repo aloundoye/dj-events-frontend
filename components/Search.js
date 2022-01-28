@@ -3,9 +3,8 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function Search() {
-  const [term, setTerm] = useState("");
-
   const router = useRouter();
+  const [term, setTerm] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
