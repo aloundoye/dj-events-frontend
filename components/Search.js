@@ -1,6 +1,6 @@
 import styles from "@/styles/Search.module.css";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Search() {
   const router = useRouter();

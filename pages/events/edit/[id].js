@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Layout from "@/components/Layout";
 import Modal from "@/components/Modal";
+import ImageUpload from "@/components/ImageUpload";
 import Link from "next/link";
 import Image from "next/image";
 import { API_URL } from "@/config/index";
@@ -14,6 +15,8 @@ import qs from "qs";
 
 export default function EditEventPage({ event }) {
   const [showModal, setShowModal] = useState(false);
+
+  const router = useRouter();
 
   const [values, setValues] = useState({
     name: event.data.attributes.name,
@@ -26,7 +29,7 @@ export default function EditEventPage({ event }) {
   });
 
   const [imagePreview, setImagePreview] = useState(
-    event.data.attributes.image
+    event.data.attributes.image.data
       ? event.data.attributes.image.data.attributes.formats.thumbnail.url
       : null
   );
@@ -64,7 +67,24 @@ export default function EditEventPage({ event }) {
     setValues({ ...values, [name]: value });
   };
 
-  const router = useRouter();
+  const imageUploaded = async () => {
+    const query = qs.stringify(
+      {
+        populate: "image",
+      },
+      {
+        encodeValuesOnly: true,
+      }
+    );
+
+    const res = await fetch(`${API_URL}/api/events/${event.data.id}?${query}`);
+    const data = await res.json();
+
+    setImagePreview(
+      data.data.attributes.image.data.attributes.formats.thumbnail.url
+    );
+    setShowModal(false);
+  };
 
   return (
     <Layout title="Add New Event">
@@ -150,18 +170,25 @@ export default function EditEventPage({ event }) {
       {imagePreview ? (
         <>
           <h2>Event Image</h2>
-          <Image src={imagePreview} height={100} width={170} />
+          <Image
+            src={imagePreview}
+            alt="event-image"
+            height={100}
+            width={170}
+          />
         </>
       ) : (
         <h2>No image uploaded</h2>
       )}
       <div>
-        <button className="btn-secondary" onClick={()=>setShowModal(true)}>
+        <button className="btn-secondary" onClick={() => setShowModal(true)}>
           <FaImage /> Set Image
         </button>
       </div>
 
-      <Modal show={showModal} onClose={()=>setShowModal(false)}>Image Upload</Modal>
+      <Modal show={showModal} onClose={() => setShowModal(false)}>
+        <ImageUpload eventId={event.data.id} imageUploaded={imageUploaded} />
+      </Modal>
     </Layout>
   );
 }
