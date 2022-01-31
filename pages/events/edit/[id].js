@@ -16,8 +16,6 @@ import qs from "qs";
 export default function EditEventPage({ event }) {
   const [showModal, setShowModal] = useState(false);
 
-  const router = useRouter();
-
   const [values, setValues] = useState({
     name: event.data.attributes.name,
     performers: event.data.attributes.performers,
@@ -33,6 +31,8 @@ export default function EditEventPage({ event }) {
       ? event.data.attributes.image.data.attributes.formats.thumbnail.url
       : null
   );
+
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();

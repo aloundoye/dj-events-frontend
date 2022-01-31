@@ -1,8 +1,11 @@
 import Layout from "@/components/Layout";
 import EventItem from "@/components/EventItem";
 import { API_URL } from "@/config/index";
+import { Pagination } from "@/components/Pagination";
 
-export default function EventsPage({ events }) {
+const EVENTS_PER_PAGE = 3;
+
+export default function EventsPage({ events, page, pageCount }) {
   console.log();
   return (
     <Layout>
@@ -12,26 +15,36 @@ export default function EventsPage({ events }) {
       {events.data.map((event) => (
         <EventItem key={event.id} evt={event.attributes} />
       ))}
+
+      <Pagination page={page} pageCount={pageCount} />
     </Layout>
   );
 }
 
-export async function getStaticProps() {
+export async function getServerSideProps({ query: { page = 1 } }) {
   const qs = require("qs");
   const query = qs.stringify(
     {
       sort: ["date:asc"],
       populate: "image",
+      pagination: {
+        page: page,
+        pageSize: EVENTS_PER_PAGE,
+      },
     },
     {
       encodeValuesOnly: true,
     }
   );
-  const res = await fetch(`${API_URL}/api/events?${query}`);
-  const events = await res.json();
+
+  const eventsRes = await fetch(`${API_URL}/api/events?${query}`);
+  const events = await eventsRes.json();
 
   return {
-    props: { events },
-    revalidate: 1,
+    props: {
+      events,
+      page: events.meta.pagination.page,
+      pageCount: events.meta.pagination.pageCount,
+    },
   };
 }
