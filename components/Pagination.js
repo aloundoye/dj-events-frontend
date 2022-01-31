@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export function Pagination({ page, pageCount }) {
+export default function Pagination({ page, pageCount }) {
   return (
     <>
       {page > 1 && (

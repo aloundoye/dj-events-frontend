@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import EventItem from "@/components/EventItem";
 import { API_URL } from "@/config/index";
-import { Pagination } from "@/components/Pagination";
+import Pagination from "@/components/Pagination";
 
 const EVENTS_PER_PAGE = 3;
 
